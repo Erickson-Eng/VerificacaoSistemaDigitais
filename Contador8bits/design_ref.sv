@@ -1,14 +1,28 @@
-module fourBitUpDownCounter(
-  input CLK,
-  input UD,
-  output reg [7:0] Count,
-  input Clear);
- 	always @(Clear)
- 	if (Clear == 0)
-   		Count = 8'b00000000;            // Clear (asíncrono)
- 	always @(negedge CLK)
- 	case ({UD,Clear})               // Concatenar es {}
-   		2'b01 : Count= Count+1;     // Count Up
-   		2'b11 : Count= Count-1;     // Count Down
-  	endcase
+module contador8bitsUpDown(
+    input clock,
+    input reset,
+    input key,
+    input load,
+    input bit[7:0] entrada,
+    output bit[7:0] count
+);
+always @(negedge clock ) begin
+    if (load && reset) begin
+        count <= entrada;
+    end
+end
+
+always @(posedge clock or negedge reset) begin
+    if (!reset) begin
+        count <= 8'b00000000;
+    end else begin
+        if (!load) begin
+            if (key) begin
+                count <= count + 1;
+            end else begin
+                count <= count - 1;
+            end
+        end
+    end
+end
 endmodule
